@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>spectra scan report</title>
+<style>
+body{font-family:-apple-system,sans-serif;max-width:900px;margin:40px auto;padding:0 20px;background:#0d1117;color:#c9d1d9}
+h1{color:#58a6ff} h2{color:#58a6ff;border-bottom:1px solid #30363d;padding-bottom:8px}
+.risk-high{color:#f85149;font-weight:bold}
+.risk-med{color:#d29922;font-weight:bold}
+.risk-low{color:#3fb950;font-weight:bold}
+.active{color:#f85149;font-weight:bold}
+.bg{color:#d29922;font-weight:bold}
+table{border-collapse:collapse;width:100%} td,th{padding:8px 12px;text-align:left;border-bottom:1px solid #30363d}
+th{color:#8b949e}
+.finding{border:1px solid #30363d;border-radius:8px;padding:4px 16px;margin:12px 0}
+.finding ul{margin:4px 0 8px;color:#8b949e}
+.action{color:#c9d1d9;font-weight:600}
+.cat{color:#8b949e;font-weight:normal;font-size:0.9em}
+.expected{color:#8b949e}
+</style>
+</head>
+<body>
+<h1>spectra privacy report</h1>
+<p>Redmi Note 13 5G &mdash; 2312DRAABI</p>
+<h2>Findings</h2>
+<p><span class="risk-high">1 high</span> &middot; <span class="risk-med">1 to review</span> &middot; <span class="risk-low">3 low</span> &middot; 21 behaving as expected</p>
+<div class="finding"><p><span class="risk-high">HIGH 55/100</span> &mdash; <strong>Airtel Thanks</strong> <span class="cat">utility app</span></p>
+<ul>
+<li>+15 Reads your contacts, which a utility app does not need</li>
+<li>+30 Read your contacts while you were not using the app</li>
+<li>+10 Holds permission to read your call log</li>
+</ul>
+<p class="action">What to do: Remove Airtel Thanks's Contacts permission; a utility app does not need your address book.</p></div>
+<div class="finding"><p><span class="risk-med">REVIEW 25/100</span> &mdash; <strong>NoiseFit</strong> <span class="cat">health app</span></p>
+<ul>
+<li>+15 Reads your contacts, which a health app does not need</li>
+<li>+10 Holds permission to read your call log</li>
+</ul>
+<p class="action">What to do: Remove NoiseFit's Contacts permission; a health app does not need your address book.</p></div>
+<div class="finding"><p><span class="risk-low">LOW 20/100</span> &mdash; <strong>WhatsApp</strong> <span class="cat">messaging app</span></p>
+<ul>
+<li>+0 Microphone use (2 times) is normal for a messaging app</li>
+<li>+0 Background contacts access is expected for a messaging app</li>
+<li>+10 Touched every sensor: microphone, camera, location and contacts</li>
+<li>+10 Uploaded 2.4 MB today while also using microphone and camera</li>
+</ul>
+<p class="action">What to do: No action needed.</p></div>
+<div class="finding"><p><span class="risk-low">LOW 20/100</span> &mdash; <strong>Google</strong> <span class="cat">assistant app</span></p>
+<ul>
+<li>+0 Microphone use (3 times) is normal for an assistant app</li>
+<li>+10 Holds permission to read your SMS</li>
+<li>+10 Holds permission to read your call log</li>
+</ul>
+<p class="action">What to do: No action needed.</p></div>
+<div class="finding"><p><span class="risk-low">LOW 15/100</span> &mdash; <strong>Truecaller</strong> <span class="cat">caller-ID app</span></p>
+<ul>
+<li>+15 Caller-ID apps upload your address book to build their phone directory</li>
+<li>+0 Background contacts access is expected for a caller-ID app</li>
+</ul>
+<p class="action">What to do: No action needed.</p></div>
+<p class="expected">Behaving as expected: ixigo Trains, Google Pay, IMS Calling Service, Phone, Xiaomi Bluetooth, Bluetooth, Google Play Services, Telegram, Face Unlock, Zepto, BigBasket, Mi Connect, Android System Intelligence, Contacts Storage, Contacts, Messages, Gmail, Google Meet, Android System, Call Management, System UI</p>
+<h2>Sensor Access</h2>
+<table>
+<tr><th>App</th><th>Sensor</th><th>Last Access</th><th>Duration</th><th>Status</th></tr>
+<tr><td>Face Unlock</td><td>camera</td><td>2026-11-11 22:39</td><td>0s</td><td></td></tr>
+<tr><td>WhatsApp</td><td>camera</td><td>2026-11-11 19:51</td><td>2s</td><td></td></tr>
+<tr><td>Telegram</td><td>camera</td><td>2026-11-11 21:32</td><td>2s</td><td></td></tr>
+<tr><td>Google</td><td>mic</td><td>2026-11-11 13:06</td><td>0s</td><td></td></tr>
+<tr><td>WhatsApp</td><td>mic</td><td>2026-11-11 18:13</td><td>47s</td><td></td></tr>
+<tr><td>Android System</td><td>location</td><td>2026-11-11 22:09</td><td>0s</td><td></td></tr>
+<tr><td>Call Management</td><td>location</td><td>2026-11-11 23:14</td><td>0s</td><td></td></tr>
+<tr><td>System UI</td><td>location</td><td>2026-11-11 23:14</td><td>0s</td><td></td></tr>
+<tr><td>IMS Calling Service</td><td>location</td><td>2026-11-11 22:14</td><td>0s</td><td></td></tr>
+<tr><td>Phone</td><td>location</td><td>2026-11-11 23:14</td><td>0s</td><td></td></tr>
+<tr><td>Xiaomi Bluetooth</td><td>location</td><td>2026-11-11 23:15</td><td>0s</td><td></td></tr>
+<tr><td>Bluetooth</td><td>location</td><td>2026-11-11 21:54</td><td>0s</td><td></td></tr>
+<tr><td>Google Play Services</td><td>location</td><td>2026-11-11 23:07</td><td>0s</td><td></td></tr>
+<tr><td>Google Pay</td><td>location</td><td>2026-11-11 19:56</td><td>0s</td><td></td></tr>
+<tr><td>WhatsApp</td><td>location</td><td>2026-11-11 18:13</td><td>0s</td><td></td></tr>
+<tr><td>ixigo Trains</td><td>location</td><td>2026-11-11 12:03</td><td>0s</td><td> <span class="bg">BACKGROUND</span></td></tr>
+<tr><td>Zepto</td><td>location</td><td>2026-11-11 16:28</td><td>0s</td><td></td></tr>
+<tr><td>BigBasket</td><td>location</td><td>2026-11-11 19:57</td><td>0s</td><td></td></tr>
+<tr><td>Mi Connect</td><td>location</td><td>2026-11-11 11:59</td><td>0s</td><td></td></tr>
+<tr><td>Android System Intelligence</td><td>location</td><td>2026-11-11 11:59</td><td>0s</td><td></td></tr>
+<tr><td>Google</td><td>location</td><td>2026-11-11 17:22</td><td>0s</td><td></td></tr>
+<tr><td>Android System</td><td>contacts</td><td>2026-11-11 22:56</td><td>0s</td><td></td></tr>
+<tr><td>Bluetooth</td><td>contacts</td><td>2026-11-11 21:27</td><td>0s</td><td></td></tr>
+<tr><td>Contacts Storage</td><td>contacts</td><td>2026-11-11 19:37</td><td>0s</td><td></td></tr>
+<tr><td>Google Play Services</td><td>contacts</td><td>2026-11-11 22:33</td><td>0s</td><td></td></tr>
+<tr><td>Contacts</td><td>contacts</td><td>2026-11-11 22:25</td><td>0s</td><td></td></tr>
+<tr><td>Messages</td><td>contacts</td><td>2026-11-11 22:25</td><td>0s</td><td></td></tr>
+<tr><td>Google</td><td>contacts</td><td>2026-11-11 13:06</td><td>0s</td><td></td></tr>
+<tr><td>Gmail</td><td>contacts</td><td>2026-11-11 19:37</td><td>0s</td><td></td></tr>
+<tr><td>Google Meet</td><td>contacts</td><td>2026-11-11 20:14</td><td>0s</td><td> <span class="bg">BACKGROUND</span></td></tr>
+<tr><td>Airtel Thanks</td><td>contacts</td><td>2026-11-11 15:59</td><td>0s</td><td> <span class="bg">BACKGROUND</span></td></tr>
+<tr><td>WhatsApp</td><td>contacts</td><td>2026-11-11 23:08</td><td>0s</td><td> <span class="bg">BACKGROUND</span></td></tr>
+<tr><td>Truecaller</td><td>contacts</td><td>2026-11-11 20:14</td><td>0s</td><td> <span class="bg">BACKGROUND</span></td></tr>
+<tr><td>NoiseFit</td><td>contacts</td><td>2026-11-11 20:13</td><td>0s</td><td></td></tr>
+</table>
+<h2>Network Activity</h2>
+<table>
+<tr><th>App</th><th>Destination</th><th>Port</th><th>Sent</th><th>Received</th><th>Interface</th></tr>
+<tr><td>Global</td><td>g2600-140f-9000-0000-0000-0000-1735-f092.deploy.static.akamaitechnologies.com</td><td>443</td><td>139.0 KB</td><td>3.4 MB</td><td>wifi</td></tr>
+<tr><td>Facebook Services</td><td>edge-dgw-mini6-shv-01-maa3.facebook.com</td><td>443</td><td>583.8 KB</td><td>668.2 KB</td><td>wifi</td></tr>
+<tr><td>Global</td><td>g2600-140f-9000-0000-0000-0000-1735-f092.deploy.static.akamaitechnologies.com</td><td>443</td><td>139.0 KB</td><td>3.4 MB</td><td>wifi</td></tr>
+<tr><td>Google Play Services</td><td>se-in-f188.1e100.net</td><td>5228</td><td>2.6 MB</td><td>3.8 MB</td><td>wifi</td></tr>
+<tr><td>Global</td><td>g2600-140f-9000-0000-0000-0000-1735-f092.deploy.static.akamaitechnologies.com</td><td>443</td><td>139.0 KB</td><td>3.4 MB</td><td>wifi</td></tr>
+<tr><td>Xiaomi Service Framework</td><td>::ffff:20.33.19.88</td><td>5222</td><td>137.0 KB</td><td>119.3 KB</td><td>wifi</td></tr>
+<tr><td>Global</td><td>g2600-140f-9000-0000-0000-0000-1735-f092.deploy.static.akamaitechnologies.com</td><td>443</td><td>139.0 KB</td><td>3.4 MB</td><td>wifi</td></tr>
+<tr><td>Global</td><td>g2600-140f-9000-0000-0000-0000-1735-f092.deploy.static.akamaitechnologies.com</td><td>443</td><td>139.0 KB</td><td>3.4 MB</td><td>wifi</td></tr>
+<tr><td>WhatsApp</td><td>whatsapp-chatd-edge6-shv-01-maa3.facebook.com</td><td>443</td><td>2.4 MB</td><td>5.5 MB</td><td>wifi</td></tr>
+</table>
+<h2>All Scores</h2>
+<table>
+<tr><th>App</th><th>Type</th><th>Score</th><th>Summary</th></tr>
+<tr><td>Airtel Thanks</td><td>utility</td><td><span class="risk-high">55</span></td><td>Contacts used by this utility app. Background access detected.</td></tr>
+<tr><td>NoiseFit</td><td>health</td><td><span class="risk-med">25</span></td><td>Contacts used by this health app.</td></tr>
+<tr><td>WhatsApp</td><td>messaging</td><td><span class="risk-low">20</span></td><td>Microphone, camera, location and contacts used by this messaging app.</td></tr>
+<tr><td>Google</td><td>assistant</td><td><span class="risk-low">20</span></td><td>Microphone, location and contacts used by this assistant app.</td></tr>
+<tr><td>Truecaller</td><td>caller-ID</td><td><span class="risk-low">15</span></td><td>Contacts used by this caller-ID app.</td></tr>
+<tr><td>ixigo Trains</td><td>travel</td><td><span class="risk-low">10</span></td><td>Location used by this travel app.</td></tr>
+<tr><td>Google Pay</td><td>finance</td><td><span class="risk-low">10</span></td><td>Location used by this finance app.</td></tr>
+<tr><td>IMS Calling Service</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>Phone</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>Xiaomi Bluetooth</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>Bluetooth</td><td>system</td><td><span class="risk-low">0</span></td><td>Location and contacts used by this system app.</td></tr>
+<tr><td>Google Play Services</td><td>system</td><td><span class="risk-low">0</span></td><td>Location and contacts used by this system app.</td></tr>
+<tr><td>Telegram</td><td>messaging</td><td><span class="risk-low">0</span></td><td>Camera used by this messaging app.</td></tr>
+<tr><td>Face Unlock</td><td>system</td><td><span class="risk-low">0</span></td><td>Camera used by this system app.</td></tr>
+<tr><td>Zepto</td><td>commerce</td><td><span class="risk-low">0</span></td><td>Location used by this commerce app.</td></tr>
+<tr><td>BigBasket</td><td>commerce</td><td><span class="risk-low">0</span></td><td>Location used by this commerce app.</td></tr>
+<tr><td>Mi Connect</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>Android System Intelligence</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>Contacts Storage</td><td>system</td><td><span class="risk-low">0</span></td><td>Contacts used by this system app.</td></tr>
+<tr><td>Contacts</td><td>system</td><td><span class="risk-low">0</span></td><td>Contacts used by this system app.</td></tr>
+<tr><td>Messages</td><td>messaging</td><td><span class="risk-low">0</span></td><td>Contacts used by this messaging app.</td></tr>
+<tr><td>Gmail</td><td>messaging</td><td><span class="risk-low">0</span></td><td>Contacts used by this messaging app.</td></tr>
+<tr><td>Google Meet</td><td>messaging</td><td><span class="risk-low">0</span></td><td>Contacts used by this messaging app.</td></tr>
+<tr><td>Android System</td><td>system</td><td><span class="risk-low">0</span></td><td>Location and contacts used by this system app.</td></tr>
+<tr><td>Call Management</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+<tr><td>System UI</td><td>system</td><td><span class="risk-low">0</span></td><td>Location used by this system app.</td></tr>
+</table>
+<p><em>Scan duration: 3.6s</em></p>
+</body>
+</html>
