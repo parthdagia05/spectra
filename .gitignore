@@ -1,0 +1,18 @@
+# Build output
+build/
+*.o
+*.obj
+
+# Deploy artifacts
+dist/
+.wrangler/
+
+# Python
+__pycache__/
+*.pyc
+
+# Local scan data
+*.db
+
+# macOS
+.DS_Store
