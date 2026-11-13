@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spectra</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  /* Calm dark palette — soft charcoal, low-saturation, easy on the eyes */
+  --bg: #16181a;
+  --sidebar-bg: #121314;
+  --card: #1e2124;
+  --card-hover: #23272b;
+  --border: rgba(255,255,255,0.08);
+  --border-active: rgba(255,255,255,0.14);
+  --text: #e4e6e2;
+  --text-2: #9aa09a;
+  --text-3: #6b716b;
+  --green: #6cc39a;
+  --green-dim: rgba(108,195,154,0.12);
+  --green-border: rgba(108,195,154,0.22);
+  --red: #d98a7e;
+  --red-dim: rgba(217,138,126,0.12);
+  --red-border: rgba(217,138,126,0.24);
+  --amber: #d4b06a;
+  --amber-dim: rgba(212,176,106,0.12);
+  --amber-border: rgba(212,176,106,0.24);
+  --blue: #7fa6cc;
+  --blue-dim: rgba(127,166,204,0.12);
+  --blue-border: rgba(127,166,204,0.24);
+  --accent: #5fa890;
+  --shadow: 0 1px 2px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.22);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  color-scheme: dark;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; }
+html { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 230px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  z-index: 30;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px 24px;
+}
+.sidebar-logo svg { color: var(--accent); flex-shrink: 0; }
+.sidebar-logo span { font-size: 16px; font-weight: 600; letter-spacing: 0.03em; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  font-family: var(--font);
+  transition: background 0.12s, color 0.12s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.nav-item.active { color: var(--text); background: rgba(255,255,255,0.06); }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.5; }
+.nav-item.active svg { opacity: 0.8; }
+.nav-badge {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--red);
+  background: var(--red-dim);
+  border: 1px solid var(--red-border);
+}
+
+.sidebar-spacer { flex: 1; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 10px; }
+.sidebar-version {
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+/* ===== Main ===== */
+.main { flex: 1; margin-left: 230px; min-width: 0; }
+.main-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 20;
+}
+.header-spacer { flex: 1; }
+.conn-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.conn-chip .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.conn-chip .dot.green { background: var(--green); }
+.conn-chip .dot.amber { background: var(--amber); }
+.conn-chip .dot.red { background: var(--red); }
+
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.scan-btn {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border-active);
+  border-radius: var(--radius-sm);
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.scan-btn:hover { background: var(--card-hover); border-color: rgba(255,255,255,0.12); }
+.scan-btn[disabled] { opacity: 0.4; cursor: default; }
+.scan-btn.primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: #fff;
+}
+.scan-btn.primary:hover { opacity: 0.9; }
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 500;
+}
+.live-indicator .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* progress */
+.progress-track {
+  position: fixed; top: 0; left: 230px; right: 0;
+  height: 2px; z-index: 40;
+}
+.progress-bar {
+  height: 100%; width: 0;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* ===== Content ===== */
+.content { padding: 24px 28px 48px; max-width: 1200px; }
+.view { display: none; }
+.view.active { display: block; }
+
+.view-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.view-subtitle {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 24px;
+}
+
+/* ===== Banner ===== */
+.banner {
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.banner.info {
+  background: var(--blue-dim);
+  border: 1px solid var(--blue-border);
+  color: var(--blue);
+}
+.banner.warn {
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+}
+.banner.error {
+  background: var(--red-dim);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+.banner svg { width: 16px; height: 16px; flex-shrink: 0; }
+.banner-text { flex: 1; }
+
+/* ===== Stat cards ===== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.stat-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.stat-icon svg { width: 18px; height: 18px; }
+.stat-icon.green { background: var(--green-dim); color: var(--green); }
+.stat-icon.red { background: var(--red-dim); color: var(--red); }
+.stat-icon.amber { background: var(--amber-dim); color: var(--amber); }
+.stat-icon.neutral { background: rgba(255,255,255,0.05); color: var(--text-2); }
+.stat-icon.blue { background: var(--blue-dim); color: var(--blue); }
+.stat-body { min-width: 0; }
+.stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat-label { font-size: 12.5px; color: var(--text-2); margin-top: 3px; }
+
+.badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.badge-green { color: var(--green); background: var(--green-dim); border: 1px solid var(--green-border); }
+.badge-red { color: var(--red); background: var(--red-dim); border: 1px solid var(--red-border); }
+.badge-amber { color: var(--amber); background: var(--amber-dim); border: 1px solid var(--amber-border); }
+.badge-blue { color: var(--blue); background: var(--blue-dim); border: 1px solid var(--blue-border); }
+.badge-muted { color: var(--text-3); background: rgba(255,255,255,0.04); border: 1px solid var(--border); }
+
+.pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ===== Panels grid ===== */
+.panels-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.panels-row.full { grid-template-columns: 1fr; }
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.panel-title { font-size: 15px; font-weight: 600; }
+.panel-desc { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* data grid */
+.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.data-cell { padding: 12px 0; border-top: 1px solid var(--border); }
+.data-cell:nth-child(-n+2) { border-top: none; }
+.data-label { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
+.data-value {
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+}
+
+/* list panel */
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.list-row:first-child { border-top: none; }
+.list-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+.list-body { flex: 1; min-width: 0; }
+.list-title { font-size: 13.5px; font-weight: 500; }
+.list-sub {
+  font-size: 11.5px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-end { flex-shrink: 0; }
+
+/* status table */
+.status-table { width: 100%; border-collapse: collapse; }
+.status-table th {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-align: left;
+  padding: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+.status-table th:last-child { text-align: right; }
+.status-table td {
+  padding: 11px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.status-table td:last-child { text-align: right; }
+.status-table .host { font-family: var(--mono); font-size: 12.5px; color: var(--text-2); }
+.status-table .num { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.status-text { font-weight: 500; }
+.status-text.green { color: var(--green); }
+.status-text.red { color: var(--red); }
+.status-text.amber { color: var(--amber); }
+.status-text.muted { color: var(--text-3); }
+
+/* ===== App cards ===== */
+.section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; margin-top: 14px; }
+.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.app-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.app-card:hover { border-color: var(--border-active); box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.3); }
+.app-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.app-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+.app-name { font-size: 14px; font-weight: 600; }
+.app-pkg { font-size: 11.5px; color: var(--text-3); font-family: var(--mono); }
+.app-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.app-row-label { color: var(--text-3); }
+.app-row-val { color: var(--text-2); }
+.perm-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.perm-tag {
+  font-size: 11px;
+  color: var(--text-2);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+.perm-tag.highlight { color: var(--red); border-color: var(--red-border); background: var(--red-dim); }
+
+/* ===== Risk bars ===== */
+.risk-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.risk-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.risk-app-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.risk-app-info { flex: 1; min-width: 0; }
+.risk-app-name { font-size: 15px; font-weight: 600; }
+.risk-app-pkg { font-size: 12px; color: var(--text-3); font-family: var(--mono); }
+.risk-score-big {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.risk-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.risk-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.risk-explanation {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.risk-factors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.device-select { background: var(--card); color: var(--text); border: 1px solid var(--border-active); border-radius: var(--radius-sm); padding: 7px 10px; font: inherit; font-size: 13px; max-width: 220px; }
+.guest-toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); cursor: pointer; user-select: none; }
+.guest-toggle input { accent-color: var(--accent); }
+.connect-help { background: var(--card); border: 1px solid var(--border-active); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px; }
+.connect-help h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+.connect-help p { margin: 0 0 10px; font-size: 13px; color: var(--text-2); }
+.connect-help ol { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--text); }
+.connect-help ol span { color: var(--text-2); }
+.connect-help .hint { margin-top: 10px; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--amber-dim); border: 1px solid var(--amber-border); font-size: 13px; color: var(--amber); }
+.risk-reasons { list-style: none; margin: 10px 0 0; padding: 0; }
+.risk-reasons li { display: flex; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--text-2); padding: 3px 0; border-top: 1px solid var(--border); }
+.risk-reasons li:first-child { border-top: none; }
+.risk-pts { font-family: var(--mono); font-size: 12px; min-width: 34px; text-align: right; color: var(--text-3); }
+.risk-pts.hit { color: var(--amber); }
+.risk-pts.hot { color: var(--red); }
+.risk-action { margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--blue-dim); border: 1px solid var(--blue-border); font-size: 13px; line-height: 1.5; color: var(--text); }
+.risk-action.ok { background: var(--green-dim); border-color: var(--green-border); }
+.risk-action strong { color: var(--blue); font-weight: 600; margin-right: 6px; }
+.risk-action.ok strong { color: var(--green); }
+.risk-factor {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ===== Sensor timeline ===== */
+.sensor-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.sensor-event:first-child { border-top: none; }
+.sensor-type-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sensor-type-icon svg { width: 18px; height: 18px; }
+.sensor-type-icon.mic { background: var(--amber-dim); color: var(--amber); }
+.sensor-type-icon.camera { background: var(--red-dim); color: var(--red); }
+.sensor-type-icon.location { background: var(--blue-dim); color: var(--blue); }
+.sensor-type-icon.contacts { background: var(--bg-3, var(--amber-dim)); color: var(--text-2, var(--amber)); }
+.sensor-info { flex: 1; min-width: 0; }
+.sensor-app-name { font-size: 14px; font-weight: 500; }
+.sensor-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  margin-top: 2px;
+}
+.sensor-status { flex-shrink: 0; }
+
+/* ===== Forms (allowlist, settings) ===== */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--border-active);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text-3); }
+.form-row { display: flex; gap: 10px; align-items: flex-end; }
+.form-row .form-group { flex: 1; margin-bottom: 0; }
+
+.domain-list { margin-top: 16px; }
+.domain-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.domain-item .domain-text { flex: 1; }
+.domain-remove {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1;
+}
+.domain-remove:hover { color: var(--red); background: var(--red-dim); }
+
+/* ===== Settings ===== */
+.setting-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.setting-row:first-child { border-top: none; }
+.setting-label { font-size: 14px; font-weight: 500; }
+.setting-desc { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.setting-value {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ===== History table ===== */
+.history-table { width: 100%; border-collapse: collapse; }
+.history-table th {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-align: left;
+  padding: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+.history-table td {
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.history-table tr { cursor: pointer; transition: background 0.1s; }
+.history-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+/* ===== Empty state ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-3);
+}
+.empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
+.empty-state h3 { font-size: 16px; color: var(--text-2); margin-bottom: 8px; }
+.empty-state p { font-size: 13px; max-width: 360px; margin: 0 auto; }
+
+/* ===== Footer ===== */
+.scan-footer {
+  display: flex;
+  gap: 24px;
+  padding: 20px 0 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text-3);
+  flex-wrap: wrap;
+}
+.scan-footer strong { color: var(--text-2); font-weight: 500; }
+.footer-note { margin-left: auto; font-size: 11.5px; }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  background: var(--card);
+  border: 1px solid var(--border-active);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text);
+  z-index: 100;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.2s, opacity 0.2s;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+
+/* ===== Responsive ===== */
+@media (max-width: 960px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .progress-track { left: 0; }
+  body { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 860px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .panels-row { grid-template-columns: 1fr; }
+  .app-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .content { padding: 16px 16px 40px; }
+  .stat-value { font-size: 22px; }
+  .main-header { padding: 12px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot, .progress-bar { animation: none; transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <rect x="1" y="5" width="15" height="2.4" rx="1.2" fill="currentColor"/>
+      <rect x="3.5" y="10" width="13" height="2.4" rx="1.2" fill="currentColor" opacity="0.5"/>
+      <rect x="6" y="15" width="10.5" height="2.4" rx="1.2" fill="currentColor" opacity="0.22"/>
+    </svg>
+    <span>spectra</span>
+  </div>
+
+  <button class="nav-item active" data-view="dashboard">
+    <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="10" y="2" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="10" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="10" y="10" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.4"/></svg>
+    Dashboard
+  </button>
+  <button class="nav-item" data-view="sensors">
+    <svg viewBox="0 0 18 18" fill="none"><path d="M9 3a2.5 2.5 0 0 1 2.5 2.5V9A2.5 2.5 0 1 1 6.5 9V5.5A2.5 2.5 0 0 1 9 3Z" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 8v1a4.5 4.5 0 0 0 9 0V8M9 13.5V16M6.5 16h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    Sensors
+  </button>
+  <button class="nav-item" data-view="network">
+    <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M9 5v4l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    Network
+  </button>
+  <button class="nav-item" data-view="risk">
+    <svg viewBox="0 0 18 18" fill="none"><path d="M9 2l1.8 5.5H16l-4.2 3 1.6 5.2L9 12.8l-4.4 2.9 1.6-5.2-4.2-3h5.2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    Risk Analysis
+    <span class="nav-badge" id="riskBadge" style="display:none">0</span>
+  </button>
+  <button class="nav-item" data-view="apps">
+    <svg viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M3 7h12M7 7v8" stroke="currentColor" stroke-width="1.4"/></svg>
+    Apps
+  </button>
+
+  <div class="sidebar-divider"></div>
+
+  <button class="nav-item" data-view="history">
+    <svg viewBox="0 0 18 18" fill="none"><path d="M9 3v6l4 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.4"/></svg>
+    History
+  </button>
+  <button class="nav-item" data-view="allowlist">
+    <svg viewBox="0 0 18 18" fill="none"><path d="M6.5 9l2 2 3.5-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.4"/></svg>
+    Allowlist
+  </button>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-divider"></div>
+  <button class="nav-item" data-view="settings">
+    <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.05 4.05l1.41 1.41M12.54 12.54l1.41 1.41M4.05 13.95l1.41-1.41M12.54 5.46l1.41-1.41" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    Settings
+  </button>
+  <div class="sidebar-version">spectra v1.0</div>
+</aside>
+
+<!-- Main area -->
+<div class="main">
+  <header class="main-header">
+    <div class="conn-chip" id="connChip">
+      <span class="dot red" id="connDot"></span>
+      <span id="connText">No device connected</span>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="header-actions">
+      <div class="live-indicator" id="liveIndicator" style="display:none">
+        <span class="dot"></span> Live
+      </div>
+      <select class="device-select" id="deviceSelect" style="display:none" onchange="selectDevice(this.value)"></select>
+      <label class="guest-toggle" title="Scan without saving anything to history. Use this for other people's phones.">
+        <input type="checkbox" id="guestToggle" onchange="S.guest=this.checked"> Guest scan
+      </label>
+      <button class="scan-btn primary" id="scanBtn" onclick="runScan()">Scan Now</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div id="serverBanner"></div>
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <section class="view active" id="view-dashboard">
+      <div id="connectHelp"></div>
+      <div class="stats-row" id="statsRow"></div>
+      <div class="panels-row" id="deviceScanPanels"></div>
+      <div class="panels-row" id="riskSensorPanels"></div>
+      <div class="panels-row full">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Network Activity</div>
+            <span class="badge badge-muted" id="netCountBadge">0 destinations</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="status-table">
+              <thead><tr><th>App</th><th>Destination</th><th>Port</th><th style="text-align:right">Sent</th><th style="text-align:right">Received</th><th style="text-align:right">Status</th></tr></thead>
+              <tbody id="netBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">Flagged Apps</div>
+      <div class="app-grid" id="appGrid"></div>
+      <footer class="scan-footer" id="scanFooter"></footer>
+    </section>
+
+    <!-- ============ SENSORS VIEW ============ -->
+    <section class="view" id="view-sensors">
+      <div class="view-title">Sensor Access</div>
+      <div class="view-subtitle">Microphone, camera, location and contacts access recorded by Android</div>
+      <div class="stats-row" id="sensorStats"></div>
+      <div class="panels-row">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Microphone Events</div>
+          </div>
+          <div id="micEvents"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Camera Events</div>
+          </div>
+          <div id="camEvents"></div>
+        </div>
+      </div>
+      <div class="panels-row" style="margin-top:14px">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Location Reads</div>
+          </div>
+          <div id="locEvents"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Contacts Reads</div>
+          </div>
+          <div id="contactsEvents"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head">
+          <div class="panel-title">All Sensor Events</div>
+          <span class="badge badge-muted" id="sensorCountBadge">0 events</span>
+        </div>
+        <div id="allSensorEvents"></div>
+      </div>
+    </section>
+
+    <!-- ============ NETWORK VIEW ============ -->
+    <section class="view" id="view-network">
+      <div class="view-title">Network Activity</div>
+      <div class="view-subtitle">Active connections and data transfer from apps on your device</div>
+      <div class="stats-row" id="netStats"></div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">All Connections</div>
+          <span class="badge badge-muted" id="netFullCountBadge">0 connections</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="status-table">
+            <thead><tr><th>App</th><th>Destination</th><th>Hostname</th><th>Port</th><th>Interface</th><th style="text-align:right">Sent</th><th style="text-align:right">Received</th><th style="text-align:right">Status</th></tr></thead>
+            <tbody id="netFullBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RISK VIEW ============ -->
+    <section class="view" id="view-risk">
+      <div class="view-title">Risk Analysis</div>
+      <div class="view-subtitle">Correlation engine results with risk scores and explanations</div>
+      <div class="stats-row" id="riskStats"></div>
+      <div id="riskCards"></div>
+    </section>
+
+    <!-- ============ APPS VIEW ============ -->
+    <section class="view" id="view-apps">
+      <div class="view-title">App Details</div>
+      <div class="view-subtitle">Detailed information about apps that accessed sensors</div>
+      <div class="app-grid" id="appFullGrid"></div>
+    </section>
+
+    <!-- ============ HISTORY VIEW ============ -->
+    <section class="view" id="view-history">
+      <div class="view-title">Scan History</div>
+      <div class="view-subtitle">Past scans stored in the local database</div>
+      <div class="panel">
+        <div style="overflow-x:auto">
+          <table class="history-table">
+            <thead><tr><th>ID</th><th>Device</th><th>Date</th><th>Sensors</th><th>Connections</th><th style="text-align:right">Duration</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="historyEmpty">
+          <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v16l10 6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="3"/></svg>
+          <h3>No scan history yet</h3>
+          <p>Run a scan to start building your history. Each scan is automatically saved.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ALLOWLIST VIEW ============ -->
+    <section class="view" id="view-allowlist">
+      <div class="view-title">Domain Allowlist</div>
+      <div class="view-subtitle">Trusted domains that reduce risk scores for apps connecting to them</div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Trusted Domains</div>
+          <span class="badge badge-muted" id="allowlistCount">0 domains</span>
+        </div>
+        <div class="form-row" style="margin-bottom:16px">
+          <div class="form-group">
+            <input type="text" class="form-input" id="newDomain" placeholder="e.g. example.com" onkeydown="if(event.key==='Enter')addDomain()">
+          </div>
+          <button class="scan-btn" onclick="addDomain()">Add Domain</button>
+        </div>
+        <div class="domain-list" id="domainList"></div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head">
+          <div class="panel-title">Built-in Allowlist</div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="panel-desc" style="margin-bottom:14px;margin-top:-10px">These domains are always considered safe. They include popular communication services.</div>
+        <div id="builtinAllowlist"></div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section class="view" id="view-settings">
+      <div class="view-title">Settings</div>
+      <div class="view-subtitle">Configure scan behavior and connection settings</div>
+
+      <div class="setting-card">
+        <div class="panel-head" style="margin-bottom:0">
+          <div class="panel-title">Connection</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">ADB Status</div>
+            <div class="setting-desc">Android Debug Bridge connection</div>
+          </div>
+          <span class="setting-value" id="settingsAdbStatus">Checking...</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Device</div>
+            <div class="setting-desc">Connected Android device</div>
+          </div>
+          <span class="setting-value" id="settingsDevice">None</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Connection Type</div>
+            <div class="setting-desc">How the device is connected</div>
+          </div>
+          <span class="setting-value" id="settingsConnType">-</span>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="panel-head" style="margin-bottom:0">
+          <div class="panel-title">Scan Configuration</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Lookback Period</div>
+            <div class="setting-desc">How far back to look for sensor access events</div>
+          </div>
+          <span class="setting-value">24 hours</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Scan Mode</div>
+            <div class="setting-desc">Android device scanning over ADB</div>
+          </div>
+          <span class="setting-value">Android (ADB)</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Risk Threshold</div>
+            <div class="setting-desc">Score above which an app is flagged</div>
+          </div>
+          <span class="setting-value">50 / 100</span>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="panel-head" style="margin-bottom:0">
+          <div class="panel-title">About</div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Version</div>
+            <div class="setting-desc">Spectra / Spectra</div>
+          </div>
+          <span class="setting-value">1.0.0</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Data Storage</div>
+            <div class="setting-desc">Scan history database location</div>
+          </div>
+          <span class="setting-value">~/.spectra/scans.db</span>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Source</div>
+            <div class="setting-desc">Privacy transparency for Android</div>
+          </div>
+          <span class="setting-value">MIT License</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== State ===== */
+var S = {
+  serverUp: false,
+  device: null,
+  guest: false,
+  lastStatus: null,
+  scanning: false,
+  liveMode: false,
+  liveTimer: null,
+  scan: null,
+  history: [],
+  allowlist: [],
+  currentView: 'dashboard'
+};
+
+var BUILTIN_ALLOWLIST = [
+  'whatsapp.com', 'web.whatsapp.com',
+  'signal.org', 'chat.signal.org',
+  'zoom.us', 'zoom.com',
+  'meet.google.com', 'duo.google.com',
+  'facetime.apple.com'
+];
+
+var DEMO_DATA = {
+  device: { model:'SM-S921B', name:'Galaxy S24', android_version:'15', api_level:35, connection:'USB', has_root:false },
+  sensors: [
+    { app_name:'Instagram', package:'com.instagram.android', sensor_type:'mic', uid:10234, last_access:Math.floor(Date.now()/1000)-120, duration_ms:5000, currently_active:true, background:false },
+    { app_name:'Instagram', package:'com.instagram.android', sensor_type:'camera', uid:10234, last_access:Math.floor(Date.now()/1000)-120, duration_ms:5000, currently_active:true, background:false },
+    { app_name:'WhatsApp', package:'com.whatsapp', sensor_type:'mic', uid:10187, last_access:Math.floor(Date.now()/1000)-1200, duration_ms:45000, currently_active:false, background:false },
+    { app_name:'WhatsApp', package:'com.whatsapp', sensor_type:'camera', uid:10187, last_access:Math.floor(Date.now()/1000)-3600, duration_ms:12000, currently_active:false, background:false },
+    { app_name:'Google Assistant', package:'com.google.android.apps.googleassistant', sensor_type:'mic', uid:10045, last_access:Math.floor(Date.now()/1000)-5400, duration_ms:3000, currently_active:false, background:false },
+    { app_name:'Chrome', package:'com.android.chrome', sensor_type:'mic', uid:10102, last_access:Math.floor(Date.now()/1000)-9000, duration_ms:2000, currently_active:false, background:true }
+  ],
+  network: [
+    { app_name:'Instagram', package:'com.instagram.android', remote_ip:'157.240.1.35', remote_host:'graph.facebook.com', remote_port:443, bytes_sent:4404019, bytes_recv:838860, interface:'wifi', uid:10234 },
+    { app_name:'Instagram', package:'com.instagram.android', remote_ip:'157.240.1.63', remote_host:'edge-mqtt.facebook.com', remote_port:443, bytes_sent:104857, bytes_recv:2202009, interface:'wifi', uid:10234 },
+    { app_name:'Instagram', package:'com.instagram.android', remote_ip:'157.240.1.174', remote_host:'cdn.instagram.com', remote_port:443, bytes_sent:10485, bytes_recv:12897484, interface:'wifi', uid:10234 },
+    { app_name:'Chrome', package:'com.android.chrome', remote_ip:'142.250.80.14', remote_host:'google.com', remote_port:443, bytes_sent:1258291, bytes_recv:3565158, interface:'wifi', uid:10102 },
+    { app_name:'Chrome', package:'com.android.chrome', remote_ip:'203.0.113.42', remote_host:'unknown', remote_port:8443, bytes_sent:314572, bytes_recv:0, interface:'wifi', uid:10102 },
+    { app_name:'WhatsApp', package:'com.whatsapp', remote_ip:'157.240.24.60', remote_host:'web.whatsapp.com', remote_port:443, bytes_sent:3250585, bytes_recv:5872025, interface:'wifi', uid:10187 },
+    { app_name:'Google Assistant', package:'com.google.android.apps.googleassistant', remote_ip:'142.250.80.14', remote_host:'google.com', remote_port:443, bytes_sent:524288, bytes_recv:1048576, interface:'wifi', uid:10045 }
+  ],
+  correlations: [
+    { app_name:'Instagram', package:'com.instagram.android', risk_score:82, explanation:'Microphone and camera both active. Sent 4.2 MB to graph.facebook.com.' },
+    { app_name:'Chrome', package:'com.android.chrome', risk_score:65, explanation:'Microphone used recently. Sent 307.2 KB to unknown. Background sensor access detected. Destination is unrecognized.' },
+    { app_name:'WhatsApp', package:'com.whatsapp', risk_score:12, explanation:'Microphone used recently. Sent 3.1 MB to web.whatsapp.com. Destination is allowlisted.' },
+    { app_name:'Google Assistant', package:'com.google.android.apps.googleassistant', risk_score:8, explanation:'Microphone used recently. Sent 512.0 KB to google.com.' }
+  ],
+  apps: [
+    { app_name:'Instagram', package:'com.instagram.android', install_source:'Play Store', permissions:'camera, record_audio, access_fine_location, read_external_storage, read_contacts', first_install:'2024-03-15', is_system_app:false },
+    { app_name:'Chrome', package:'com.android.chrome', install_source:'pre-installed', permissions:'camera, record_audio, access_fine_location, read_external_storage', first_install:'2023-01-01', is_system_app:true },
+    { app_name:'WhatsApp', package:'com.whatsapp', install_source:'Play Store', permissions:'camera, record_audio, read_contacts, read_external_storage', first_install:'2023-06-20', is_system_app:false },
+    { app_name:'Google Assistant', package:'com.google.android.apps.googleassistant', install_source:'pre-installed', permissions:'record_audio, read_contacts, access_fine_location', first_install:'2023-01-01', is_system_app:true }
+  ],
+  scan_duration_s: 1.2
+};
+
+/* ===== Utilities ===== */
+function fmtB(b) {
+  if (b >= 1048576) return (b/1048576).toFixed(1)+' MB';
+  if (b >= 1024) return (b/1024).toFixed(0)+' KB';
+  return b+' B';
+}
+
+function fmtTime(ts) {
+  var d = new Date(ts * 1000);
+  return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function fmtDate(ts) {
+  var d = new Date(ts * 1000);
+  return d.toLocaleDateString([], {year:'numeric', month:'short', day:'numeric'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function verdictLabel(c) {
+  var v = c.verdict || (c.risk_score >= 50 ? 'high' : c.risk_score >= 25 ? 'review' : c.risk_score >= 15 ? 'low' : 'expected');
+  return { high:'High Risk', review:'Needs Review', low:'Low Risk', expected:'As Expected' }[v] || v;
+}
+function reasonsHtml(c) {
+  var rs = c.reasons || [];
+  if (!rs.length) return '';
+  return '<ul class="risk-reasons">' + rs.map(function(r) {
+    var p = r.points || 0;
+    var cls = p >= 25 ? 'hot' : p > 0 ? 'hit' : '';
+    return '<li><span class="risk-pts ' + cls + '">' + (p > 0 ? '+' + p : p === 0 ? '0' : p) + '</span><span>' + escHtml(r.text) + '</span></li>';
+  }).join('') + '</ul>';
+}
+function actionHtml(c) {
+  if (!c.action) return '';
+  var ok = c.action === 'No action needed.';
+  return '<div class="risk-action' + (ok ? ' ok' : '') + '"><strong>' + (ok ? 'OK' : 'Do this') + '</strong>' + escHtml(c.action) + '</div>';
+}
+function sensorCount(d, type) {
+  return d.sensors.filter(function(s){ return !type || s.sensor_type === type; })
+    .reduce(function(a, s){ return a + (s.access_count || 1); }, 0);
+}
+function accessesLabel(s) {
+  var n = s.access_count || 1;
+  return n + (n === 1 ? ' access' : ' accesses');
+}
+function sensorLetter(t) {
+  return { mic:'M', camera:'C', location:'L', contacts:'P' }[t] || '?';
+}
+function sensorSvg(t) {
+  if (t === 'mic') return micSvg();
+  if (t === 'camera') return camSvg();
+  if (t === 'location') return locIcon();
+  if (t === 'contacts') return contactsIcon();
+  return camSvg();
+}
+function fmtDur(ms) {
+  if (!ms) return 'n/a';
+  if (ms >= 60000) return Math.floor(ms/60000)+'m '+Math.floor((ms%60000)/1000)+'s';
+  if (ms >= 1000) return Math.floor(ms/1000)+'s';
+  return ms+'ms';
+}
+
+function riskColor(score) {
+  if (score >= 50) return 'red';
+  if (score >= 25) return 'amber';
+  return 'green';
+}
+
+function riskLevel(score) {
+  if (score >= 75) return 'Critical';
+  if (score >= 50) return 'High';
+  if (score >= 25) return 'Medium';
+  return 'Low';
+}
+
+function uniquePkgs(items) {
+  var seen = {};
+  items.forEach(function(i) { seen[i.package] = true; });
+  return Object.keys(seen);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+/* ===== API ===== */
+async function api(path, opts) {
+  try {
+    var res = await fetch('/api' + path, opts);
+    if (!res.ok) {
+      /* server errors carry a readable message: {"error": "..."} */
+      try { var e = await res.json(); return e && e.error ? { error: e.error } : null; } catch (x) { return null; }
+    }
+    return await res.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+async function checkServer() {
+  var data = await api('/status' + (S.device ? '?device=' + encodeURIComponent(S.device) : ''));
+  if (data && !data.error) {
+    S.serverUp = true;
+    document.getElementById('serverBanner').innerHTML = '';
+    updateConnection(data);
+    return true;
+  }
+  S.serverUp = false;
+  document.getElementById('serverBanner').innerHTML =
+    '<div class="banner info"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3M8 10h.01" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
+    '<span class="banner-text">Running with demo data. Start the server for live scanning: <strong>python3 tools/serve.py</strong></span></div>';
+  S.scan = DEMO_DATA;
+  renderAll();
+  return false;
+}
+
+function selectDevice(serial) {
+  S.device = serial || null;
+  checkServer();
+}
+
+function renderDeviceSelect(status) {
+  var sel = document.getElementById('deviceSelect');
+  var devices = (status && status.devices) || [];
+  var usable = devices.filter(function(d){ return d.state === 'device'; });
+  if (usable.length < 2) { sel.style.display = 'none'; return; }
+  sel.style.display = '';
+  sel.innerHTML = usable.map(function(d) {
+    var label = (d.model || d.serial) + ' (' + d.serial.slice(0, 8) + ')';
+    return '<option value="' + escHtml(d.serial) + '"' + (d.serial === (status.serial || S.device) ? ' selected' : '') + '>' + escHtml(label) + '</option>';
+  }).join('');
+  if (!S.device) S.device = status.serial || usable[0].serial;
+}
+
+function renderConnectHelp(status) {
+  var el = document.getElementById('connectHelp');
+  if (!el) return;
+  if (!status || status.device_connected || !status.adb_available) { el.innerHTML = ''; return; }
+  var hint = status.unauthorized
+    ? '<div class="hint">Phone found. Unlock it and tap <strong>Allow</strong> on the "Allow USB debugging?" prompt, then it will connect by itself.</div>'
+    : '';
+  el.innerHTML = '<div class="connect-help">' +
+    '<h3>Connect a phone to scan it</h3>' +
+    '<p>Nothing is installed on the phone and nothing leaves this computer. Takes about a minute.</p>' +
+    '<ol>' +
+    '<li>Settings &rsaquo; About phone &rsaquo; tap <strong>Build number</strong> 7 times <span>(Xiaomi/Redmi: "OS version"; Samsung: under Software information)</span></li>' +
+    '<li>Settings &rsaquo; Developer options &rsaquo; turn on <strong>USB debugging</strong></li>' +
+    '<li>Plug in the cable. If nothing happens, switch the USB mode from "Charging only" to <strong>File transfer</strong></li>' +
+    '<li>Unlock the phone and tap <strong>Allow</strong> on the prompt</li>' +
+    '</ol>' + hint +
+    '<p style="margin-top:10px">Afterwards: Developer options &rsaquo; <strong>Revoke USB debugging authorizations</strong>, then turn USB debugging off.</p>' +
+    '</div>';
+}
+
+function updateConnection(status) {
+  var dot = document.getElementById('connDot');
+  var text = document.getElementById('connText');
+  S.lastStatus = status;
+  renderDeviceSelect(status);
+  renderConnectHelp(status);
+  if (status && status.device_connected) {
+    dot.className = 'dot green';
+    text.textContent = (status.device_name || 'Android device') + ' connected via ' + (status.connection_type || 'USB');
+    document.getElementById('settingsAdbStatus').textContent = 'Connected';
+    document.getElementById('settingsAdbStatus').style.color = 'var(--green)';
+    document.getElementById('settingsDevice').textContent = status.device_name || status.device_model || 'Android';
+    document.getElementById('settingsConnType').textContent = status.connection_type || 'USB';
+  } else if (status && status.adb_available) {
+    dot.className = 'dot amber';
+    text.textContent = status.unauthorized ? 'Phone found: tap Allow on the phone' : 'ADB ready, no device connected';
+    document.getElementById('settingsAdbStatus').textContent = 'No device';
+    document.getElementById('settingsAdbStatus').style.color = 'var(--amber)';
+    document.getElementById('settingsDevice').textContent = 'None';
+    document.getElementById('settingsConnType').textContent = '-';
+  } else {
+    dot.className = 'dot red';
+    text.textContent = 'ADB not available';
+    document.getElementById('settingsAdbStatus').textContent = 'Not found';
+    document.getElementById('settingsAdbStatus').style.color = 'var(--red)';
+    document.getElementById('settingsDevice').textContent = 'None';
+    document.getElementById('settingsConnType').textContent = '-';
+  }
+}
+
+/* ===== Scan ===== */
+async function runScan() {
+  if (S.scanning) return;
+  S.scanning = true;
+  var btn = document.getElementById('scanBtn');
+  var bar = document.getElementById('progressBar');
+  btn.disabled = true;
+  btn.textContent = 'Scanning...';
+
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  void bar.offsetWidth;
+  bar.style.transition = 'width 0.5s ease';
+
+  if (!S.serverUp) {
+    // Demo mode animation
+    var steps = [{p:'15%',d:0},{p:'40%',d:400},{p:'65%',d:800},{p:'85%',d:1200},{p:'100%',d:1600}];
+    steps.forEach(function(s){setTimeout(function(){bar.style.width=s.p},s.d)});
+    setTimeout(function() {
+      S.scan = DEMO_DATA;
+      renderAll();
+      btn.disabled = false;
+      btn.textContent = 'Scan Now';
+      S.scanning = false;
+      setTimeout(function(){bar.style.width='0%'},400);
+      showToast('Scan complete (demo data)');
+    }, 2000);
+    return;
+  }
+
+  bar.style.width = '30%';
+  var qs = [];
+  if (S.device) qs.push('device=' + encodeURIComponent(S.device));
+  if (S.guest) qs.push('store=0');
+  var data = await api('/scan' + (qs.length ? '?' + qs.join('&') : ''));
+  bar.style.width = '90%';
+
+  if (data && data.sensors) {
+    S.scan = data;
+    renderAll();
+    showToast('Scan complete — ' + data.sensors.length + ' apps used sensors, ' + data.network.length + ' connections' + (S.guest ? ' (not saved)' : ''));
+  } else {
+    showToast((data && data.error) ? data.error : 'Scan failed. Check the phone connection.');
+    checkServer();
+  }
+
+  bar.style.width = '100%';
+  setTimeout(function() {
+    btn.disabled = false;
+    btn.textContent = 'Scan Now';
+    S.scanning = false;
+    bar.style.width = '0%';
+  }, 500);
+}
+
+/* ===== Navigation ===== */
+document.querySelectorAll('.nav-item[data-view]').forEach(function(item) {
+  item.addEventListener('click', function() {
+    navigate(this.getAttribute('data-view'));
+  });
+});
+
+function navigate(view) {
+  S.currentView = view;
+  document.querySelectorAll('.nav-item').forEach(function(n) {
+    n.classList.toggle('active', n.getAttribute('data-view') === view);
+  });
+  document.querySelectorAll('.view').forEach(function(v) {
+    v.classList.toggle('active', v.id === 'view-' + view);
+  });
+  if (view === 'history' && S.serverUp) loadHistory();
+  if (view === 'allowlist') renderAllowlist();
+}
+
+/* ===== Render All ===== */
+function renderAll() {
+  if (!S.scan) return;
+  renderDashboard();
+  renderSensors();
+  renderNetwork();
+  renderRisk();
+  renderApps();
+  renderAllowlist();
+}
+
+/* ===== Dashboard Render ===== */
+function renderDashboard() {
+  var d = S.scan;
+  var nSensors = d.sensors.length;
+  var activeNow = d.sensors.filter(function(s){return s.currently_active}).length;
+  var nConn = d.network.length;
+  var maxRisk = d.correlations.length ? Math.max.apply(null, d.correlations.map(function(c){return c.risk_score})) : 0;
+  var flagged = d.correlations.filter(function(c){return c.risk_score>=50}).length;
+  var bgCount = d.sensors.filter(function(s){return s.background}).length;
+  var nApps = uniquePkgs(d.sensors).length;
+
+  // Stats row
+  document.getElementById('statsRow').innerHTML =
+    statCard('neutral', micIcon(), nSensors, nSensors > 0 ? '<span class="badge badge-green">Indexed</span>' : '', 'Sensor Events') +
+    statCard('red', alertIcon(), activeNow, activeNow > 0 ? '<span class="pulse-dot"></span>' : '', 'Active Now') +
+    statCard('green', clockIcon(), nConn, '', 'Connections') +
+    statCard(maxRisk >= 50 ? 'red' : maxRisk >= 25 ? 'amber' : 'green', starIcon(), maxRisk, '', 'Highest Risk');
+
+  // Device + Scan panels
+  var deviceHtml = '', scanHtml = '';
+  if (d.device && d.device.model) {
+    deviceHtml = '<div class="panel"><div class="panel-head"><div class="panel-title">Device Information</div><span class="badge badge-green">Connected</span></div>' +
+      '<div class="data-grid">' +
+      dataCell('Model', d.device.model) +
+      dataCell('Name', d.device.name || d.device.model) +
+      dataCell('Android', d.device.android_version || '-') +
+      dataCell('API Level', d.device.api_level || '-') +
+      dataCell('Connection', d.device.connection || 'USB') +
+      dataCell('Root', d.device.has_root ? 'Yes' : 'No') +
+      '</div></div>';
+  } else {
+    deviceHtml = '<div class="panel"><div class="panel-head"><div class="panel-title">Device Information</div><span class="badge badge-muted">Local</span></div>' +
+      '<div class="data-grid">' +
+      dataCell('Platform', 'macOS') +
+      dataCell('Mode', 'Local scan') +
+      '</div></div>';
+  }
+
+  var micEvents = sensorCount(d, 'mic');
+  var camEvents = sensorCount(d, 'camera');
+  var locEvents = sensorCount(d, 'location');
+  var contactsEvents = sensorCount(d, 'contacts');
+
+  scanHtml = '<div class="panel"><div class="panel-head"><div class="panel-title">Scan Overview</div><span class="badge badge-muted">' +
+    (d.scan_duration_s ? d.scan_duration_s.toFixed(1) + 's' : '-') + '</span></div>' +
+    '<div class="data-grid">' +
+    dataCell('Mic Events', micEvents) +
+    dataCell('Camera Events', camEvents) +
+    dataCell('Location Reads', locEvents) +
+    dataCell('Contacts Reads', contactsEvents) +
+    dataCell('Background Access', bgCount > 0 ? '<span style="color:var(--amber)">' + bgCount + '</span>' : '0') +
+    dataCell('Flagged Apps', flagged > 0 ? '<span style="color:var(--red)">' + flagged + '</span>' : '0') +
+    dataCell('Apps Scanned', nApps) +
+    dataCell('Destinations', uniqueHosts(d.network).length) +
+    '</div></div>';
+
+  document.getElementById('deviceScanPanels').innerHTML = deviceHtml + scanHtml;
+
+  // Risk + Sensor panels
+  var riskList = d.correlations.map(function(r) {
+    var bc = r.risk_score >= 50 ? 'badge-red' : r.risk_score >= 25 ? 'badge-amber' : 'badge-green';
+    return '<div class="list-row">' +
+      '<div class="list-icon">' + escHtml(r.app_name.charAt(0)) + '</div>' +
+      '<div class="list-body"><div class="list-title">' + escHtml(r.app_name) + '</div><div class="list-sub">' + escHtml(r.explanation) + '</div></div>' +
+      '<div class="list-end"><span class="badge ' + bc + '">' + r.risk_score + '/100</span></div></div>';
+  }).join('');
+
+  var sensorList = d.sensors.map(function(s) {
+    var icon = sensorLetter(s.sensor_type);
+    var statusBadge = '';
+    if (s.currently_active) statusBadge = '<span class="status-text red">Active</span>';
+    else if (s.background) statusBadge = '<span class="status-text amber">Background</span>';
+    else statusBadge = '<span class="status-text muted">' + fmtDur(s.duration_ms) + '</span>';
+    return '<div class="list-row">' +
+      '<div class="list-icon">' + icon + '</div>' +
+      '<div class="list-body"><div class="list-title">' + escHtml(s.app_name) + ' · ' + s.sensor_type + '</div>' +
+      '<div class="list-sub">' + accessesLabel(s) + ' · last ' + fmtTime(s.last_access) + ' · ' + fmtDur(s.duration_ms) + '</div></div>' +
+      '<div class="list-end">' + statusBadge + '</div></div>';
+  }).join('');
+
+  document.getElementById('riskSensorPanels').innerHTML =
+    '<div class="panel"><div class="panel-head"><div class="panel-title">Risk Analysis</div></div>' + (riskList || '<div style="color:var(--text-3);font-size:13px">No correlations found</div>') + '</div>' +
+    '<div class="panel"><div class="panel-head"><div class="panel-title">Sensor Monitor</div></div>' + (sensorList || '<div style="color:var(--text-3);font-size:13px">No sensor events</div>') + '</div>';
+
+  // Network table
+  var hosts = uniqueHosts(d.network);
+  document.getElementById('netCountBadge').textContent = hosts.length + ' destination' + (hosts.length !== 1 ? 's' : '');
+  document.getElementById('netBody').innerHTML = d.network.map(function(n) {
+    var ok = n.remote_host !== 'unknown';
+    return '<tr><td>' + escHtml(n.app_name) + '</td><td class="host">' + escHtml(ok ? n.remote_host : n.remote_ip) + '</td>' +
+      '<td class="num">' + n.remote_port + '</td><td class="num">' + fmtB(n.bytes_sent) + '</td>' +
+      '<td class="num">' + fmtB(n.bytes_recv) + '</td><td style="text-align:right">' +
+      (ok ? '<span class="status-text green">Known</span>' : '<span class="status-text red">Unknown</span>') + '</td></tr>';
+  }).join('');
+
+  // App cards (flagged only on dashboard)
+  var flaggedApps = d.correlations.filter(function(c){return c.risk_score >= 25});
+  var appData = d.apps || [];
+  document.getElementById('appGrid').innerHTML = flaggedApps.map(function(c) {
+    var app = appData.find(function(a){return a.package === c.package}) || {};
+    var perms = (app.permissions || '').split(/,\s*/).filter(Boolean);
+    var sensorPerms = ['camera', 'record_audio', 'access_fine_location', 'access_coarse_location', 'read_contacts'];
+    var permHtml = perms.map(function(p) {
+      var hl = sensorPerms.some(function(sp){return p.toLowerCase().indexOf(sp) >= 0});
+      return '<span class="perm-tag' + (hl ? ' highlight' : '') + '">' + escHtml(p) + '</span>';
+    }).join('');
+    var bc = c.risk_score >= 50 ? 'badge-red' : 'badge-amber';
+    return '<div class="app-card"><div class="app-head">' +
+      '<div class="app-icon">' + escHtml((c.app_name || c.package).charAt(0)) + '</div>' +
+      '<div><div class="app-name">' + escHtml(c.app_name) + ' <span class="badge ' + bc + '">' + c.risk_score + '</span></div>' +
+      '<div class="app-pkg">' + escHtml(c.package) + '</div></div></div>' +
+      '<div class="app-row"><span class="app-row-label">Source</span><span class="app-row-val">' + escHtml(app.install_source || '-') + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Type</span><span class="app-row-val">' + (app.is_system_app ? '<span class="badge badge-muted">System</span>' : 'User') + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Risk</span><span class="app-row-val">' + escHtml(c.explanation) + '</span></div>' +
+      (permHtml ? '<div class="perm-tags">' + permHtml + '</div>' : '') +
+      '</div>';
+  }).join('');
+
+  // Footer
+  document.getElementById('scanFooter').innerHTML =
+    '<span><strong>' + nApps + '</strong> apps scanned</span>' +
+    '<span><strong>' + nConn + '</strong> connections</span>' +
+    '<span><strong>' + flagged + '</strong> flagged</span>' +
+    '<span><strong>' + (d.scan_duration_s ? d.scan_duration_s.toFixed(1) + 's' : '-') + '</strong> scan time</span>' +
+    '<span class="footer-note">Metadata only. Encrypted content is never read.</span>';
+
+  // Update risk badge in sidebar
+  var riskBadge = document.getElementById('riskBadge');
+  if (flagged > 0) {
+    riskBadge.textContent = flagged;
+    riskBadge.style.display = '';
+  } else {
+    riskBadge.style.display = 'none';
+  }
+}
+
+/* ===== Sensors Render ===== */
+function renderSensors() {
+  var d = S.scan;
+  var mics = d.sensors.filter(function(s){return s.sensor_type==='mic'});
+  var cams = d.sensors.filter(function(s){return s.sensor_type==='camera'});
+  var locs = d.sensors.filter(function(s){return s.sensor_type==='location'});
+  var contacts = d.sensors.filter(function(s){return s.sensor_type==='contacts'});
+  var active = d.sensors.filter(function(s){return s.currently_active}).length;
+  var bg = d.sensors.filter(function(s){return s.background}).length;
+
+  document.getElementById('sensorStats').innerHTML =
+    statCard('neutral', micIcon(), sensorCount(d, 'mic'), '', 'Mic Events') +
+    statCard('neutral', camIcon(), sensorCount(d, 'camera'), '', 'Camera Events') +
+    statCard('neutral', locIcon(), sensorCount(d, 'location'), '', 'Location Reads') +
+    statCard('neutral', contactsIcon(), sensorCount(d, 'contacts'), '', 'Contacts Reads') +
+    statCard(active > 0 ? 'red' : 'green', alertIcon(), active, active > 0 ? '<span class="pulse-dot"></span>' : '', 'Active Now') +
+    statCard(bg > 0 ? 'amber' : 'green', bgIcon(), bg, '', 'Background');
+
+  document.getElementById('sensorCountBadge').textContent = d.sensors.length + ' apps · ' + sensorCount(d) + ' accesses';
+
+  function renderEventList(events) {
+    if (!events.length) return '<div style="color:var(--text-3);font-size:13px;padding:12px 0">No events detected</div>';
+    return events.map(function(s) {
+      var cls = s.sensor_type;
+      var iconSvg = sensorSvg(s.sensor_type);
+      var statusHtml = '';
+      if (s.currently_active) statusHtml = '<span class="badge badge-red">Active</span>';
+      else if (s.background) statusHtml = '<span class="badge badge-amber">Background</span>';
+      else statusHtml = '<span class="badge badge-muted">' + fmtDur(s.duration_ms) + '</span>';
+      return '<div class="sensor-event">' +
+        '<div class="sensor-type-icon ' + cls + '">' + iconSvg + '</div>' +
+        '<div class="sensor-info"><div class="sensor-app-name">' + escHtml(s.app_name || s.package) + '</div>' +
+        '<div class="sensor-meta">' + escHtml(s.package) + ' · ' + accessesLabel(s) + ' · last ' + fmtTime(s.last_access) + ' · uid:' + s.uid + '</div></div>' +
+        '<div class="sensor-status">' + statusHtml + '</div></div>';
+    }).join('');
+  }
+
+  document.getElementById('micEvents').innerHTML = renderEventList(mics);
+  document.getElementById('camEvents').innerHTML = renderEventList(cams);
+  document.getElementById('locEvents').innerHTML = renderEventList(locs);
+  document.getElementById('contactsEvents').innerHTML = renderEventList(contacts);
+  document.getElementById('allSensorEvents').innerHTML = renderEventList(d.sensors);
+}
+
+/* ===== Network Render ===== */
+function renderNetwork() {
+  var d = S.scan;
+  var totalSent = 0, totalRecv = 0;
+  d.network.forEach(function(n) { totalSent += n.bytes_sent; totalRecv += n.bytes_recv; });
+  var unknownDests = d.network.filter(function(n){return n.remote_host==='unknown'}).length;
+
+  document.getElementById('netStats').innerHTML =
+    statCard('neutral', connIcon(), d.network.length, '', 'Total Connections') +
+    statCard('blue', uploadIcon(), '', fmtB(totalSent), 'Data Sent') +
+    statCard('green', downloadIcon(), '', fmtB(totalRecv), 'Data Received') +
+    statCard(unknownDests > 0 ? 'red' : 'green', alertIcon(), unknownDests, '', 'Unknown Hosts');
+
+  document.getElementById('netFullCountBadge').textContent = d.network.length + ' connections';
+  document.getElementById('netFullBody').innerHTML = d.network.map(function(n) {
+    var ok = n.remote_host !== 'unknown';
+    return '<tr><td>' + escHtml(n.app_name || n.package) + '</td>' +
+      '<td class="host">' + escHtml(n.remote_ip) + '</td>' +
+      '<td class="host">' + escHtml(ok ? n.remote_host : 'unknown') + '</td>' +
+      '<td class="num">' + n.remote_port + '</td>' +
+      '<td class="num">' + escHtml(n.interface || '-') + '</td>' +
+      '<td class="num">' + fmtB(n.bytes_sent) + '</td>' +
+      '<td class="num">' + fmtB(n.bytes_recv) + '</td>' +
+      '<td style="text-align:right">' + (ok ? '<span class="status-text green">Known</span>' : '<span class="status-text red">Unknown</span>') + '</td></tr>';
+  }).join('');
+}
+
+/* ===== Risk Render ===== */
+function renderRisk() {
+  var d = S.scan;
+  var high = d.correlations.filter(function(c){return c.risk_score>=50}).length;
+  var med = d.correlations.filter(function(c){return c.risk_score>=25&&c.risk_score<50}).length;
+  var expected = d.correlations.filter(function(c){return (c.verdict||'')==='expected' || c.risk_score<15}).length;
+  var maxRisk = d.correlations.length ? Math.max.apply(null, d.correlations.map(function(c){return c.risk_score})) : 0;
+
+  document.getElementById('riskStats').innerHTML =
+    statCard(maxRisk >= 50 ? 'red' : maxRisk >= 25 ? 'amber' : 'green', starIcon(), maxRisk, '', 'Peak Risk Score') +
+    statCard(high > 0 ? 'red' : 'green', alertIcon(), high, '', 'High Risk Apps') +
+    statCard(med > 0 ? 'amber' : 'green', alertIcon(), med, '', 'Needs Review') +
+    statCard('green', checkIcon(), expected, '', 'Behaving as Expected');
+
+  document.getElementById('riskCards').innerHTML = d.correlations.map(function(c) {
+    var col = riskColor(c.risk_score);
+    var barCol = col === 'red' ? 'var(--red)' : col === 'amber' ? 'var(--amber)' : 'var(--green)';
+    var bgCol = col === 'red' ? 'var(--red-dim)' : col === 'amber' ? 'var(--amber-dim)' : 'var(--green-dim)';
+    return '<div class="risk-card"><div class="risk-header">' +
+      '<div class="risk-app-icon" style="background:' + bgCol + ';color:' + barCol + '">' + escHtml(c.app_name.charAt(0)) + '</div>' +
+      '<div class="risk-app-info"><div class="risk-app-name">' + escHtml(c.app_name) + '</div>' +
+      '<div class="risk-app-pkg">' + escHtml(c.package) + '</div></div>' +
+      '<div class="risk-score-big" style="color:' + barCol + '">' + c.risk_score + '</div></div>' +
+      '<div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + c.risk_score + '%;background:' + barCol + '"></div></div>' +
+      '<div class="risk-explanation">' + escHtml(c.explanation) + '</div>' +
+      '<div class="risk-factors">' +
+      '<span class="risk-factor badge badge-' + col + '">' + verdictLabel(c) + '</span>' +
+      (c.category ? '<span class="risk-factor badge badge-muted">' + escHtml(c.category) + ' app</span>' : '') +
+      '</div>' +
+      reasonsHtml(c) +
+      actionHtml(c) +
+      '</div>';
+  }).join('') || '<div class="empty-state"><h3>No correlations</h3><p>Run a scan to see risk analysis results.</p></div>';
+}
+
+/* ===== Apps Render ===== */
+function renderApps() {
+  var d = S.scan;
+  var appData = d.apps || [];
+  var sensorPerms = ['camera', 'record_audio', 'access_fine_location', 'access_coarse_location', 'read_contacts'];
+
+  document.getElementById('appFullGrid').innerHTML = appData.map(function(a) {
+    var corr = d.correlations.find(function(c){return c.package === a.package});
+    var riskScore = corr ? corr.risk_score : 0;
+    var perms = (a.permissions || '').split(/,\s*/).filter(Boolean);
+    var permHtml = perms.map(function(p) {
+      var hl = sensorPerms.some(function(sp){return p.toLowerCase().indexOf(sp) >= 0});
+      return '<span class="perm-tag' + (hl ? ' highlight' : '') + '">' + escHtml(p) + '</span>';
+    }).join('');
+
+    var riskBadge = '';
+    if (riskScore >= 50) riskBadge = '<span class="badge badge-red" style="margin-left:8px">' + riskScore + '</span>';
+    else if (riskScore >= 25) riskBadge = '<span class="badge badge-amber" style="margin-left:8px">' + riskScore + '</span>';
+    else if (riskScore > 0) riskBadge = '<span class="badge badge-green" style="margin-left:8px">' + riskScore + '</span>';
+
+    var sensorEvents = d.sensors.filter(function(s){return s.package === a.package});
+    var netEvents = d.network.filter(function(n){return n.package === a.package});
+
+    return '<div class="app-card"><div class="app-head">' +
+      '<div class="app-icon">' + escHtml((a.app_name || a.package).charAt(0)) + '</div>' +
+      '<div><div class="app-name">' + escHtml(a.app_name || a.package) + riskBadge + '</div>' +
+      '<div class="app-pkg">' + escHtml(a.package) + '</div></div></div>' +
+      '<div class="app-row"><span class="app-row-label">Source</span><span class="app-row-val">' + escHtml(a.install_source || '-') + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Installed</span><span class="app-row-val">' + escHtml(a.first_install || '-') + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Type</span><span class="app-row-val">' + (a.is_system_app ? '<span class="badge badge-muted">System</span>' : 'User') + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Sensor Events</span><span class="app-row-val">' + sensorEvents.length + '</span></div>' +
+      '<div class="app-row"><span class="app-row-label">Connections</span><span class="app-row-val">' + netEvents.length + '</span></div>' +
+      (corr ? '<div class="app-row"><span class="app-row-label">Risk</span><span class="app-row-val">' + escHtml(corr.explanation) + '</span></div>' : '') +
+      (corr && corr.action && corr.action !== 'No action needed.' ? '<div class="app-row"><span class="app-row-label">Do this</span><span class="app-row-val">' + escHtml(corr.action) + '</span></div>' : '') +
+      (permHtml ? '<div class="perm-tags">' + permHtml + '</div>' : '') +
+      '</div>';
+  }).join('') || '<div class="empty-state"><h3>No app data</h3><p>Run a scan to see app details.</p></div>';
+}
+
+/* ===== History ===== */
+async function loadHistory() {
+  var data = await api('/history');
+  if (data && data.scans) {
+    S.history = data.scans;
+    renderHistory();
+  }
+}
+
+function renderHistory() {
+  var empty = document.getElementById('historyEmpty');
+  var body = document.getElementById('historyBody');
+  if (!S.history.length) {
+    empty.style.display = '';
+    body.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  body.innerHTML = S.history.map(function(h) {
+    var json = {};
+    try { json = JSON.parse(h.report_json || '{}'); } catch(e) {}
+    return '<tr><td class="num">' + h.id + '</td>' +
+      '<td>' + escHtml(h.device_name || '-') + '</td>' +
+      '<td class="host">' + escHtml(h.timestamp || '-') + '</td>' +
+      '<td class="num">' + (json.n_sensors || '-') + '</td>' +
+      '<td class="num">' + (json.n_net || '-') + '</td>' +
+      '<td class="num">' + (json.scan_duration_s ? json.scan_duration_s.toFixed(1) + 's' : '-') + '</td></tr>';
+  }).join('');
+}
+
+/* ===== Allowlist ===== */
+async function loadAllowlist() {
+  if (S.serverUp) {
+    var data = await api('/allowlist');
+    if (data && data.domains) S.allowlist = data.domains;
+  }
+}
+
+function renderAllowlist() {
+  document.getElementById('allowlistCount').textContent = S.allowlist.length + ' domain' + (S.allowlist.length !== 1 ? 's' : '');
+
+  if (S.allowlist.length) {
+    document.getElementById('domainList').innerHTML = S.allowlist.map(function(d, i) {
+      return '<div class="domain-item"><span class="domain-text">' + escHtml(d) + '</span>' +
+        '<button class="domain-remove" onclick="removeDomain(' + i + ')" title="Remove">&times;</button></div>';
+    }).join('');
+  } else {
+    document.getElementById('domainList').innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0">No custom domains added yet.</div>';
+  }
+
+  document.getElementById('builtinAllowlist').innerHTML = BUILTIN_ALLOWLIST.map(function(d) {
+    return '<div class="domain-item" style="opacity:0.6"><span class="domain-text">' + escHtml(d) + '</span>' +
+      '<span class="badge badge-green" style="font-size:10px">Built-in</span></div>';
+  }).join('');
+}
+
+async function addDomain() {
+  var input = document.getElementById('newDomain');
+  var domain = input.value.trim().toLowerCase();
+  if (!domain) return;
+  if (S.allowlist.indexOf(domain) >= 0) { showToast('Domain already in list'); return; }
+  S.allowlist.push(domain);
+  input.value = '';
+
+  if (S.serverUp) {
+    await api('/allowlist', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action:'add', domain:domain}) });
+  }
+  renderAllowlist();
+  showToast('Added ' + domain);
+}
+
+async function removeDomain(idx) {
+  var domain = S.allowlist[idx];
+  S.allowlist.splice(idx, 1);
+
+  if (S.serverUp) {
+    await api('/allowlist', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action:'remove', domain:domain}) });
+  }
+  renderAllowlist();
+  showToast('Removed ' + domain);
+}
+
+/* ===== Helpers ===== */
+function uniqueHosts(net) {
+  var seen = {};
+  net.forEach(function(n) {
+    var h = n.remote_host !== 'unknown' ? n.remote_host : n.remote_ip;
+    seen[h] = true;
+  });
+  return Object.keys(seen);
+}
+
+function dataCell(label, value) {
+  return '<div class="data-cell"><div class="data-label">' + label + '</div><div class="data-value">' + value + '</div></div>';
+}
+
+function statCard(color, icon, value, extra, label) {
+  return '<div class="stat-card"><div class="stat-icon ' + color + '">' + icon + '</div>' +
+    '<div class="stat-body"><div class="stat-value">' + (value !== '' ? value : '') + (extra ? ' ' + extra : '') + '</div>' +
+    '<div class="stat-label">' + label + '</div></div></div>';
+}
+
+/* SVG Icons */
+function micIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 3a2.5 2.5 0 0 1 2.5 2.5V9A2.5 2.5 0 1 1 6.5 9V5.5A2.5 2.5 0 0 1 9 3Z" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 8v1a4.5 4.5 0 0 0 9 0V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function micSvg() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 3a2.5 2.5 0 0 1 2.5 2.5V9A2.5 2.5 0 1 1 6.5 9V5.5A2.5 2.5 0 0 1 9 3Z" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 8v1a4.5 4.5 0 0 0 9 0V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function camIcon() { return '<svg viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="11" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 8l3-2v6l-3-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function locIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 16s-5-4.6-5-8.5a5 5 0 0 1 10 0C14 11.4 9 16 9 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="1.8" stroke="currentColor" stroke-width="1.5"/></svg>'; }
+function contactsIcon() { return '<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6.5" r="2.8" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 15a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function camSvg() { return '<svg viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="11" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M13 8l3-2v6l-3-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function alertIcon() { return '<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v4M9 12h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function clockIcon() { return '<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M9 5v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function starIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 2l1.8 5.5H16l-4.2 3 1.6 5.2L9 12.8l-4.4 2.9 1.6-5.2-4.2-3h5.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>'; }
+function checkIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M5 9l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function bgIcon() { return '<svg viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12" stroke="currentColor" stroke-width="1.5"/></svg>'; }
+function connIcon() { return '<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M2 9h14M9 3c2 2 2 10 0 12M9 3c-2 2-2 10 0 12" stroke="currentColor" stroke-width="1.5"/></svg>'; }
+function uploadIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 12V4M6 7l3-3 3 3M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function downloadIcon() { return '<svg viewBox="0 0 18 18" fill="none"><path d="M9 4v8M6 9l3 3 3-3M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+
+/* ===== Init ===== */
+(async function() {
+  await checkServer();
+  if (S.serverUp) {
+    await loadAllowlist();
+    renderAllowlist();
+    setInterval(function() { if (!S.scanning) checkServer(); }, 3000);
+  } else {
+    S.scan = DEMO_DATA;
+    renderAll();
+  }
+})();
+</script>
+</body>
+</html>
